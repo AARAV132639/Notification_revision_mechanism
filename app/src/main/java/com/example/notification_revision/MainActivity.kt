@@ -17,6 +17,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.notification_revision.ui.theme.Notification_revisionTheme
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.work.ExistingWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+
+//adding new imports: Part 1
+import java.util.concurrent.TimeUnit
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,12 +32,22 @@ class MainActivity : ComponentActivity() {
 
         createNotificationChannel()
 
+        //ensuring notification channel exits.
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1)
         }
 
-        sendTestNotification()
+        //added the notification handler
+        val workRequest= PeriodicWorkRequestBuilder<NotificationWorker>(
+            15, TimeUnit.MINUTES
+        ).build()
+
+        WorkManager.getInstance(this).enqueue(workRequest)
+
+
     }
+
+    /* Previous function to call notification
 
     private fun sendTestNotification()
     {
@@ -41,7 +59,7 @@ class MainActivity : ComponentActivity() {
 
         val manager= NotificationManagerCompat.from(this)
         manager.notify(1,builder.build())
-    }
+    }*/
 
     private fun createNotificationChannel() {
         val channelId = "revision_channel"
