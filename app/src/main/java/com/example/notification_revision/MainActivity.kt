@@ -76,8 +76,12 @@ class MainActivity : ComponentActivity() {
         //testing the ui and scheduler
         val workRequest= OneTimeWorkRequestBuilder<NotificationWorker>().build()
         WorkManager.getInstance(this).enqueue(workRequest)
-        /* Experimenting
+
+
+
+        /*
         //added the notification handler
+        //Currently at 15 minutes
         val workRequest= PeriodicWorkRequestBuilder<NotificationWorker>(
             15, TimeUnit.MINUTES
         ).build()
@@ -89,7 +93,7 @@ class MainActivity : ComponentActivity() {
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
-*/
+        */
 
     }
 
