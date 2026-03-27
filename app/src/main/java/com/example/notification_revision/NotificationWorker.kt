@@ -35,21 +35,28 @@ class NotificationWorker (context: Context, workerParams: WorkerParameters):Work
         val randomQuestion= questions.random()
 
         //5. Saving log of last 15 notifications
-        val prefs= context.getSharedPreferences("logs", Context.MODE_PRIVATE)
 
-        val existingLogs= prefs.getString("data","")?:""
+        val prefs = context.getSharedPreferences("logs", Context.MODE_PRIVATE)
 
-        val newEntry= "$randomQuestion|${System.currentTimeMillis()}\n"
+    // Step 1: get existing logs safely
+        val existingLogs = prefs.getString("data", "") ?: ""
 
-        //Keep only last 15
-        val updatedLogs= (existingLogs+newEntry)
-            //.lines()
-            .split("/n")
-            .filter{it.isNotBlank()}
-            .takeLast(15)
-            .joinToString("\n")
+    // Step 2: convert to proper list
+        val logList = existingLogs
+            .split("\n")
+            .filter { it.isNotBlank() }
+            .toMutableList()
 
-        prefs.edit().putString("data", updatedLogs).apply()
+        // Step 3: add new entry
+        logList.add("$randomQuestion|${System.currentTimeMillis()}")
+
+        // Step 4: keep only last 15
+        val trimmedLogs = logList.takeLast(10)
+
+        // Step 5: save back
+        prefs.edit()
+            .putString("data", trimmedLogs.joinToString("\n"))
+            .apply()
 
         //6. build notification
         val builder= NotificationCompat.Builder(applicationContext,channelId)
