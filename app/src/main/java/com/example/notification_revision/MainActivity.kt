@@ -29,10 +29,15 @@ import androidx.work.ExistingPeriodicWorkPolicy
 
 //adding new imports: Part 2---> For storing logs
 import androidx.compose.ui.unit.dp
-import androidx.work.OneTimeWorkRequestBuilder
+
+//adding import for send notification button
+import androidx.compose.material3.Button
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.*
 
 //adding test import
 import androidx.work.OneTimeWorkRequestBuilder
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,10 +58,24 @@ class MainActivity : ComponentActivity() {
                 ?.reversed() //latest first
                 ?.joinToString("\n\n"){ entry->
                    entry.substringBefore("|").trim()
-
-                    /*val parts= entry.split("\\|")
-                    parts[0].trim() //only show questions*/
+                    
                 }
+
+            Box(modifier= Modifier.fillMaxSize()){
+                Button(onClick={
+                    triggerManualNotification()
+                },
+                    //shifting button to bottom centre
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp)
+                    )
+                {
+                    Text("Send Notification")
+                }
+
+
+            }
 
             Text(
                 text= formattedLogs?:"No logs yet",
@@ -73,13 +92,6 @@ class MainActivity : ComponentActivity() {
         }
 
 
-        //testing the ui and scheduler
-        val workRequest= OneTimeWorkRequestBuilder<NotificationWorker>().build()
-        WorkManager.getInstance(this).enqueue(workRequest)
-
-
-
-        /*
         //added the notification handler
         //Currently at 15 minutes
         val workRequest= PeriodicWorkRequestBuilder<NotificationWorker>(
@@ -93,7 +105,7 @@ class MainActivity : ComponentActivity() {
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
-        */
+
 
     }
 
@@ -125,6 +137,14 @@ class MainActivity : ComponentActivity() {
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         notificationManager.createNotificationChannel(channel)
+    }
+
+    //adding manual trigger logic
+    private fun triggerManualNotification()
+    {
+        val workRequest= androidx.work.OneTimeWorkRequestBuilder<NotificationWorker>().build()
+
+        WorkManager.getInstance(this).enqueue(workRequest)
     }
 }
 
