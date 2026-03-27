@@ -10,12 +10,13 @@
 - 1 Notification every 4-5 hours from the database that forces recall
 
 # To-do:
-- Currently, all questions are being loaded at once by scheduler
-- No notification logs
+- Current scenario: Not stress tested scheduler. 
+- Current usage: Questions pop everytime I click the app. Thus, currently it's a small quiz app
 - Scarce json file
 - build Insight folder from this project
 
 # Further work that can be done:
+- Add send notification button: So that notification can be sent outside the scheduling logic.
 - Edit question directly from app
 - Choose domain and frequency etc
 
